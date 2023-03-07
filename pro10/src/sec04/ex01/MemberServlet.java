@@ -10,6 +10,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 @WebServlet("/login5")
 public class MemberServlet extends HttpServlet {
@@ -28,17 +29,29 @@ public class MemberServlet extends HttpServlet {
 		request.setCharacterEncoding("utf-8");
 		response.setContentType("text/html;charset=utf-8");
 		PrintWriter out = response.getWriter();
-		
+
+		HttpSession session = request.getSession();
+
 		MemberDAO dao = new MemberDAO();
-		
+
 		String id = request.getParameter("user_id");
 		String pwd = request.getParameter("user_pw");
-		
+
 		boolean  result = dao.isExisted(id, pwd);
 		if(result) {
-			System.out.println("로그인 성공");
-		}else {
-			System.out.println("로그인 실패");
+			session.setAttribute("isLogon", id);
+			session.setAttribute("user_id", id);
+			session.setAttribute("user_pw", pwd);
+
+			out.print("<html><body>");
+			out.print("<h3>" + id + "님 환영합니다.</h3>");
+			out.print("<a href='show'>회원정보 보기</a>");
+			out.print("</body></html>");
+		} else {
+			out.print("<html><body>");
+			out.print("<h3>로그인에 실패하였습니다.</h3>");
+			out.print("<a href='/pro10/login2.html'>다시 로그인하기</a>");
+			out.print("</body></html>");
 		}
 	}
 }
